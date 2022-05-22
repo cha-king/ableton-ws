@@ -1,8 +1,8 @@
 import asyncio
 import logging
-from typing import List
+from typing import Set
 
-from fastapi import FastAPI, WebSocket
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 
 from .models import Note
 
@@ -15,7 +15,7 @@ app = FastAPI()
 
 class ConnectionManager:
     def __init__(self):
-        self._websockets: List[WebSocket] = []
+        self._websockets: Set[WebSocket] = set()
 
     async def publish(self, note: Note):
         cos = [
@@ -24,7 +24,10 @@ class ConnectionManager:
         await asyncio.gather(*cos)
 
     def subscribe(self, websocket: WebSocket):
-        self._websockets.append(websocket)
+        self._websockets.add(websocket)
+
+    def unsubscribe(self, websocket: WebSocket):
+        self._websockets.remove(websocket)
 
 
 manager = ConnectionManager()
@@ -38,8 +41,11 @@ async def publish_note(note: Note):
 @app.websocket("/ws")
 async def get_notes(websocket: WebSocket):
     await websocket.accept()
+    logger.info("Client connected")
     manager.subscribe(websocket)
-    while True:
-        data = await websocket.receive_json()
-        note = Note.parse_obj(data)
-        await manager.publish(note)
+    try:
+        while True:
+            await websocket.receive_json()
+    except WebSocketDisconnect:
+        logger.info("Client disconnected")
+        manager.unsubscribe(websocket)
