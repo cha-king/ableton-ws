@@ -2,7 +2,7 @@ const max = require("max-api");
 const WebSocket = require("ws");
 
 
-const URL = "ws://localhost:8000/ws"
+const URL = "ws://localhost:8000/receive"
 
 
 const ws = new WebSocket(URL);
