@@ -1,9 +1,13 @@
 import asyncio
+import logging
 from typing import List
 
 from fastapi import FastAPI, WebSocket
 
 from .models import Note
+
+
+logger = logging.getLogger(__name__)
 
 
 app = FastAPI()
