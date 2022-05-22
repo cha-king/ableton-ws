@@ -1,19 +1,12 @@
 import asyncio
 from typing import List
-from dataclasses import dataclass, asdict
 
 from fastapi import FastAPI, WebSocket
-from pydantic import BaseModel
+
+from .models import Note
 
 
 app = FastAPI()
-
-
-@dataclass
-class Note:
-    pitch: int
-    velocity: int
-    channel: int = 1
 
 
 class ConnectionManager:
@@ -22,7 +15,7 @@ class ConnectionManager:
 
     async def publish(self, note: Note):
         cos = [
-            websocket.send_json(asdict(note)) for websocket in self._websockets
+            websocket.send_json(note.dict()) for websocket in self._websockets
         ]
         await asyncio.gather(*cos)
 
@@ -33,15 +26,8 @@ class ConnectionManager:
 manager = ConnectionManager()
 
 
-class NoteRequest(BaseModel):
-    pitch: int
-    velocity: int
-    channel: int = 1
-
-
 @app.post("/publish")
-async def publish_note(note_request: NoteRequest):
-    note = Note(note_request.pitch, note_request.velocity)
+async def publish_note(note: Note):
     await manager.publish(note)
 
 
@@ -51,5 +37,5 @@ async def get_notes(websocket: WebSocket):
     manager.subscribe(websocket)
     while True:
         data = await websocket.receive_json()
-        note = Note(data['pitch'], data['velocity'])
+        note = Note.parse_obj(data)
         await manager.publish(note)
