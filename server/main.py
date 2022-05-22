@@ -33,11 +33,6 @@ class ConnectionManager:
 manager = ConnectionManager()
 
 
-@app.post("/publish")
-async def publish_note(note: Note):
-    await manager.publish(note)
-
-
 @app.websocket("/ws")
 async def get_notes(websocket: WebSocket):
     await websocket.accept()
