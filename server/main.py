@@ -33,7 +33,7 @@ class ConnectionManager:
 manager = ConnectionManager()
 
 
-@app.websocket("/ws")
+@app.websocket("/receive")
 async def get_notes(websocket: WebSocket):
     await websocket.accept()
     logger.info("Client connected")
