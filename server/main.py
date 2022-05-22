@@ -36,11 +36,24 @@ manager = ConnectionManager()
 @app.websocket("/receive")
 async def get_notes(websocket: WebSocket):
     await websocket.accept()
-    logger.info("Client connected")
+    logger.info("Receive client connected")
     manager.subscribe(websocket)
     try:
         while True:
             await websocket.receive_json()
     except WebSocketDisconnect:
-        logger.info("Client disconnected")
+        logger.info("Receive client disconnected")
         manager.unsubscribe(websocket)
+
+
+@app.websocket("/publish")
+async def publish_notes(websocket: WebSocket):
+    await websocket.accept()
+    logger.info("Publish client connected")
+    try:
+        while True:
+            data = await websocket.receive_json()
+            note = Note.parse_obj(data)
+            await manager.publish(note)
+    except WebSocketDisconnect:
+        logger.info("Publish client disconnected")
