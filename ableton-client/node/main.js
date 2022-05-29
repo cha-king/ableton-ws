@@ -2,10 +2,11 @@ const max = require("max-api");
 const WebSocket = require("ws");
 
 
-const URL = "ws://localhost:8000/receive"
+const url = process.argv[2];
 
+console.log(`Attempting to connect to URL: ${url}`);
 
-const ws = new WebSocket(URL);
+const ws = new WebSocket(url);
 ws.on("error", () => {
     max.post("error");
 })
