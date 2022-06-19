@@ -4,6 +4,9 @@ const max = require("max-api");
 const WebSocket = require("ws");
 
 
+const heldNotes = new Set();
+
+
 const url = process.argv[2];
 
 console.log(`Attempting to connect to URL: ${url}`);
@@ -22,5 +25,10 @@ console.log("Connected");
 
 const rl = readline.createInterface({input: process.stdin, terminal: false});
 rl.on('line', line => {
-    console.log(line);
+    const [pitch, velocity] = line.split(' ').map(x => parseInt(x));
+    if (velocity !== 0) {
+        heldNotes.add(pitch);
+    } else {
+        heldNotes.delete(pitch);
+    }
 });
