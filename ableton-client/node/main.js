@@ -1,3 +1,5 @@
+const readline = require("readline");
+
 const max = require("max-api");
 const WebSocket = require("ws");
 
@@ -16,3 +18,9 @@ ws.on("message", data => {
     console.log(note);
 })
 console.log("Connected");
+
+
+const rl = readline.createInterface({input: process.stdin, terminal: false});
+rl.on('line', line => {
+    console.log(line);
+});
