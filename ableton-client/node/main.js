@@ -28,6 +28,10 @@ ws.on("error", () => {
     console.error("Error");
 })
 ws.on("message", deviceId => {
+    // Do nothing if no notes are held
+    if (!heldNotes.size) {
+        return
+    }
     const id = hashCode(deviceId) % heldNotes.size
     const pitch = Array.from(heldNotes)[id];
 
