@@ -28,6 +28,7 @@ ws.on("error", () => {
     console.error("Error");
 })
 ws.on("message", deviceId => {
+    console.log("Message received");
     // Do nothing if no notes are held
     if (!heldNotes.size) {
         return
