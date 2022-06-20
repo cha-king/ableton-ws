@@ -17,9 +17,9 @@ class ConnectionManager:
     def __init__(self):
         self._websockets: Set[WebSocket] = set()
 
-    async def publish(self, note: Note):
+    async def publish(self, device_id: str):
         cos = [
-            websocket.send_json(note.dict()) for websocket in self._websockets
+            websocket.send_text(device_id) for websocket in self._websockets
         ]
         await asyncio.gather(*cos)
 
@@ -52,8 +52,7 @@ async def publish_notes(websocket: WebSocket):
     logger.info("Publish client connected")
     try:
         while True:
-            data = await websocket.receive_json()
-            note = Note.parse_obj(data)
-            await manager.publish(note)
+            device_id = await websocket.receive_text()
+            await manager.publish(device_id)
     except WebSocketDisconnect:
         logger.info("Publish client disconnected")
