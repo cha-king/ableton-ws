@@ -33,7 +33,7 @@ ws.on("message", deviceId => {
     if (!heldNotes.size) {
         return
     }
-    const id = hashCode(deviceId) % heldNotes.size
+    const id = hashCode(String(deviceId)) % heldNotes.size
     const pitch = Array.from(heldNotes)[id];
 
     max.outlet(pitch, 100);
