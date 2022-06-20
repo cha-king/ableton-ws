@@ -36,7 +36,6 @@ ws.on("message", deviceId => {
     const pitch = Array.from(heldNotes)[id];
 
     max.outlet(pitch, 100);
-    console.log(note);
 })
 console.log("Connected");
 
