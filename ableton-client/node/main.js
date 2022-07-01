@@ -1,4 +1,5 @@
 const max = require("max-api");
+const { v4: uuid4 } = require("uuid");
 const WebSocket = require("ws");
 
 
@@ -6,7 +7,9 @@ const url = process.argv[2];
 
 console.log(`Attempting to connect to URL: ${url}`);
 
-const ws = new WebSocket(url);
+const clientId = uuid4();
+
+const ws = new WebSocket(`${url}/receive/${clientId}`);
 ws.on("error", () => {
     console.error("Error");
 })
@@ -16,3 +19,4 @@ ws.on("message", data => {
     console.log(note);
 })
 console.log("Connected");
+console.log(`Client ID: ${clientId}`);

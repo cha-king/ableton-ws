@@ -43,7 +43,8 @@ async def publish_notes(websocket: WebSocket, client_id: UUID):
             # Check if client has disconnected
             if ws is None:
                 await websocket.close(code=1001, reason="Client disconnected")
-        
+                return
+
             await ws.send_json(note.dict())
 
     except WebSocketDisconnect:
